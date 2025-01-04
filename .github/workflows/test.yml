@@ -23,14 +23,14 @@ jobs:
 
       - name: Setup ROS dependencies
         run: |
-          source /opt/ros/humble/setup.bash
+          . /opt/ros/humble/setup.bash
           sudo rosdep init
           rosdep update
           rosdep install --from-paths src --ignore-src -r -y
 
       - name: Build and test
         run: |
-          source /opt/ros/humble/setup.bash
+          . /opt/ros/humble/setup.bash
           colcon build
           colcon test
           colcon test-result --all
