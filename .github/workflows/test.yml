@@ -23,7 +23,7 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y bsdmainutils
 
       - name: Setup ROS 2 workspace
-        shell: bash  # 明示的にbashを使用
+        shell: bash
         run: |
           rsync -av ./ /root/ros2_ws/src/mypkg
           cd /root/ros2_ws
@@ -31,11 +31,20 @@ jobs:
           rosdep update
           rosdep install -i --from-path src --rosdistro humble -y
 
-      - name: Build and test
-        shell: bash  # 明示的にbashを使用
+      - name: Build ROS 2 workspace
+        shell: bash
         run: |
           cd /root/ros2_ws
           colcon build
           source install/setup.bash
-          bash -xv ./src/mypkg/test/test.bash /root
 
+      - name: Build and test with dependencies
+        shell: bash
+        run: |
+          cd /root/ros2_ws
+          # 環境セットアップ
+          source /opt/ros/humble/setup.bash
+          source install/setup.bash
+          # テスト実行
+          bash -xv ./src/mypkg/test/test.bash /root
+  
