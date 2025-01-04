@@ -25,7 +25,7 @@ jobs:
       - name: Setup ROS 2 workspace
         shell: bash
         run: |
-          rsync -av ./ /root/ros2_ws/src/mypkg
+          rsync -av ./ /root/ros2_ws/src
           cd /root/ros2_ws
           source /opt/ros/humble/setup.bash
           rosdep update
@@ -38,13 +38,13 @@ jobs:
           source /opt/ros/humble/setup.bash
           colcon build --symlink-install
 
-      - name: Source setup and verify installation
+      - name: Verify Python environment
         shell: bash
         run: |
           cd /root/ros2_ws
           source /opt/ros/humble/setup.bash
           source install/setup.bash
-          env | grep PYTHONPATH
+          python3 -c "import person_msgs.msg; print('person_msgs module is available')"
 
       - name: Run tests
         shell: bash
