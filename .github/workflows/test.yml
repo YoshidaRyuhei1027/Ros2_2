@@ -36,6 +36,7 @@ jobs:
         run: |
           cd /root/ros2_ws
           source /opt/ros/humble/setup.bash
+          colcon build --packages-select person_msgs --symlink-install
           colcon build --symlink-install
 
       - name: Verify Python environment
@@ -46,6 +47,15 @@ jobs:
           source install/setup.bash
           echo "PYTHONPATH: $PYTHONPATH"
           python3 -c "from person_msgs.msg import Person; print('person_msgs module is available')"
+      
+      - name: Debug person_msgs
+        shell: bash
+        run: |
+          cd /root/ros2_ws
+          source install/setup.bash
+          echo "Installed files in person_msgs:"
+          ls -R install/person_msgs
+
 
       - name: Run tests
         shell: bash
