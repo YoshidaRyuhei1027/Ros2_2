@@ -19,7 +19,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Install required tools
+      - name: Install dependencies
         run: sudo apt-get update && sudo apt-get install -y bsdmainutils python3-pip
 
       - name: Setup ROS 2 workspace
@@ -44,8 +44,8 @@ jobs:
           cd /root/ros2_ws
           source /opt/ros/humble/setup.bash
           source install/setup.bash
-          export PYTHONPATH=$PYTHONPATH:/root/ros2_ws/install/person_msgs/lib/python3.10/site-packages
-          python3 -c "import person_msgs.msg; print('person_msgs module is available')"
+          echo "PYTHONPATH: $PYTHONPATH"
+          python3 -c "from person_msgs.msg import Person; print('person_msgs module is available')"
 
       - name: Run tests
         shell: bash
@@ -53,6 +53,5 @@ jobs:
           cd /root/ros2_ws
           source /opt/ros/humble/setup.bash
           source install/setup.bash
-          export PYTHONPATH=$PYTHONPATH:/root/ros2_ws/install/person_msgs/lib/python3.10/site-packages
           bash -xv ./src/mypkg/test/test.bash /root
   
