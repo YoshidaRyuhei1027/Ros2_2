@@ -36,10 +36,17 @@ jobs:
         run: |
           cd /root/ros2_ws
           source /opt/ros/humble/setup.bash
-          colcon build
-          source install/setup.bash
+          colcon build --symlink-install
 
-      - name: Build and test with dependencies
+      - name: Source setup and verify installation
+        shell: bash
+        run: |
+          cd /root/ros2_ws
+          source /opt/ros/humble/setup.bash
+          source install/setup.bash
+          env | grep PYTHONPATH
+
+      - name: Run tests
         shell: bash
         run: |
           cd /root/ros2_ws
