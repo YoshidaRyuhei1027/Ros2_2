@@ -22,15 +22,18 @@ jobs:
           sudo apt-get install -y python3-colcon-common-extensions python3-rosdep
 
       - name: Setup ROS dependencies
-        shell: bash  # ここで bash を指定
+        shell: bash
         run: |
           source /opt/ros/humble/setup.bash
+          if [ -f /etc/ros/rosdep/sources.list.d/20-default.list ]; then
+            sudo rm /etc/ros/rosdep/sources.list.d/20-default.list
+          fi
           sudo rosdep init
           rosdep update
           rosdep install --from-paths src --ignore-src -r -y
 
       - name: Build and test
-        shell: bash  # ここでも bash を指定
+        shell: bash
         run: |
           source /opt/ros/humble/setup.bash
           colcon build
