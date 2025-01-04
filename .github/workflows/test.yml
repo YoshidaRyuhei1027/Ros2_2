@@ -1,21 +1,37 @@
-name: test
+name: Test ROS 2 Package
 
 on: 
   push:
     branches:
-      - main
+      - main  # 変更を適用したいブランチを指定
 
 jobs:
   test:
-    runs-on: ubuntu-22.04
-    container: ryuichiueda/ubuntu22.04-ros2:latest
+    runs-on: ubuntu-22.04  # 使用するベース OS
+    container: ryuichiueda/ubuntu22.04-ros2:latest  # 使用する ROS 2 コンテナ
+
     steps:
-      - uses: actions/checkout@v2
-      - name: build and test
+      - name: Checkout repository
+        uses: actions/checkout@v2  # リポジトリのクローンを作成
+
+      - name: Install dependencies
         run: |
-          rsync -av ./ /root/ros2_ws/src/mypkg/
-          cd /root/ros2_ws
+          # ROS 2 の依存関係をインストール
+          sudo apt-get update
+          sudo apt-get install -y ros-foxy-launch-ros  # launch_ros のインストール
+
+          # ROS 2 の依存関係をインストール
           rosdep update
           rosdep install --from-paths src --ignore-src --rosdistro foxy -y
+
+      - name: Build and test package
+        run: |
+          # リポジトリの内容をコンテナ内の作業ディレクトリにコピー
+          rsync -av ./ /root/ros2_ws/src/mypkg/
+          
+          # ROS 2 の作業ディレクトリに移動
+          cd /root/ros2_ws
+          
+          # ビルドとテストの実行
           bash -xv ./src/mypkg/test/test.bash /root
 
