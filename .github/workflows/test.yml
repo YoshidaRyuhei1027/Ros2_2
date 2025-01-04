@@ -18,7 +18,12 @@ jobs:
         run: |
           # ROS 2 の依存関係をインストール
           sudo apt-get update
-          sudo apt-get install -y ros-foxy-launch-ros  # launch_ros のインストール
+          sudo apt-get install -y \
+            ros-foxy-launch-ros \
+            ros-foxy-ament-pep257 \
+            ros-foxy-rosdep \
+            ros-foxy-roslaunch \
+            ros-foxy-rosmsg
 
           # ROS 2 の依存関係をインストール
           rosdep update
