@@ -44,6 +44,7 @@ jobs:
           cd /root/ros2_ws
           source /opt/ros/humble/setup.bash
           source install/setup.bash
+          export PYTHONPATH=$PYTHONPATH:/root/ros2_ws/install/person_msgs/lib/python3.10/site-packages
           python3 -c "import person_msgs.msg; print('person_msgs module is available')"
 
       - name: Run tests
@@ -52,5 +53,6 @@ jobs:
           cd /root/ros2_ws
           source /opt/ros/humble/setup.bash
           source install/setup.bash
+          export PYTHONPATH=$PYTHONPATH:/root/ros2_ws/install/person_msgs/lib/python3.10/site-packages
           bash -xv ./src/mypkg/test/test.bash /root
   
