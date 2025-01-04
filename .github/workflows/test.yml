@@ -1,4 +1,4 @@
-name: test
+name: CI Test
 
 on:
   push:
@@ -10,58 +10,31 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: ["3.7", "3.8", "3.9", "3.10", "3.11"]
-    container: ryuichiueda/ubuntu22.04-ros2:latest
+    runs-on: ubuntu-22.04
+    container: ryuichiueda/ubuntu22.04-ros2:latest # 使用するDockerコンテナを指定
     steps:
+      # リポジトリをチェックアウト
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
+      # 必要なパッケージのインストール
       - name: Install dependencies
-        run: sudo apt-get update && sudo apt-get install -y bsdmainutils python3-pip
-
-      - name: Setup ROS 2 workspace
-        shell: bash
         run: |
-          rsync -av ./ /root/ros2_ws/src
-          cd /root/ros2_ws
-          source /opt/ros/humble/setup.bash
+          sudo apt-get update
+          sudo apt-get install -y python3-colcon-common-extensions ros-foxy-launch-ros ros-foxy-ament-pep257 ros-foxy-rosdep
+
+      # ROS 2の依存関係を解決
+      - name: Setup ROS dependencies
+        run: |
+          source /opt/ros/foxy/setup.bash
           rosdep update
-          rosdep install -i --from-path src --rosdistro humble -y
+          rosdep install --from-paths src --ignore-src -r -y
 
-      - name: Build ROS 2 workspace
-        shell: bash
+      # ビルドとテストの実行
+      - name: Build and test
         run: |
-          cd /root/ros2_ws
-          source /opt/ros/humble/setup.bash
-          colcon build --packages-select person_msgs --symlink-install
-          colcon build --symlink-install
+          source /opt/ros/foxy/setup.bash
+          colcon build
+          colcon test
+          colcon test-result --all
 
-      - name: Verify Python environment
-        shell: bash
-        run: |
-          cd /root/ros2_ws
-          source /opt/ros/humble/setup.bash
-          source install/setup.bash
-          echo "PYTHONPATH: $PYTHONPATH"
-          python3 -c "from person_msgs.msg import Person; print('person_msgs module is available')"
-      
-      - name: Debug person_msgs
-        shell: bash
-        run: |
-          cd /root/ros2_ws
-          source install/setup.bash
-          echo "Installed files in person_msgs:"
-          ls -R install/person_msgs
-
-
-      - name: Run tests
-        shell: bash
-        run: |
-          cd /root/ros2_ws
-          source /opt/ros/humble/setup.bash
-          source install/setup.bash
-          bash -xv ./src/mypkg/test/test.bash /root
-  
