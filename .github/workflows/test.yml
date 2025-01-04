@@ -1,42 +1,39 @@
-name: Test ROS 2 Package
+name: test
 
-on: 
+on:
   push:
     branches:
-      - main  # 変更を適用したいブランチを指定
+      - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
   test:
-    runs-on: ubuntu-22.04  # 使用するベース OS
-    container: ryuichiueda/ubuntu22.04-ros2:latest  # 使用する ROS 2 コンテナ
-
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.7", "3.8", "3.9", "3.10", "3.11"]
+    container: ryuichiueda/ubuntu22.04-ros2:latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2  # リポジトリのクローンを作成
+        uses: actions/checkout@v2
 
-      - name: Install dependencies
+      - name: Install required tools
+        run: sudo apt-get update && sudo apt-get install -y bsdmainutils
+
+      - name: Setup ROS 2 workspace
         run: |
-          # ROS 2 の依存関係をインストール
-          sudo apt-get update
-          sudo apt-get install -y \
-            ros-foxy-launch-ros \
-            ros-foxy-ament-pep257 \
-            ros-foxy-rosdep \
-            ros-foxy-roslaunch \
-            ros-foxy-rosmsg
-
-          # ROS 2 の依存関係をインストール
-          rosdep update
-          rosdep install --from-paths src --ignore-src --rosdistro foxy -y
-
-      - name: Build and test package
-        run: |
-          # リポジトリの内容をコンテナ内の作業ディレクトリにコピー
-          rsync -av ./ /root/ros2_ws/src/mypkg/
-          
-          # ROS 2 の作業ディレクトリに移動
+          rsync -av ./ /root/ros2_ws/src/mypkg
           cd /root/ros2_ws
-          
-          # ビルドとテストの実行
+          source /opt/ros/humble/setup.bash
+          rosdep update
+          rosdep install -i --from-path src --rosdistro humble -y
+
+      - name: Build and test
+        run: |
+          cd /root/ros2_ws
+          colcon build
+          source install/setup.bash
           bash -xv ./src/mypkg/test/test.bash /root
 
