@@ -11,26 +11,22 @@ on:
 jobs:
   test:
     runs-on: ubuntu-22.04
-    container: ryuichiueda/ubuntu22.04-ros2:latest # 使用するDockerコンテナを指定
+    container: ryuichiueda/ubuntu22.04-ros2:latest
     steps:
-      # リポジトリをチェックアウト
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # 必要なパッケージのインストール
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y python3-colcon-common-extensions ros-humble-launch-ros ros-humble-ament-pep257 ros-foxy-rosdep
+          sudo apt-get install -y python3-colcon-common-extensions ros-humble-rosdep
 
-      # ROS 2の依存関係を解決
       - name: Setup ROS dependencies
         run: |
           source /opt/ros/humble/setup.bash
           rosdep update
           rosdep install --from-paths src --ignore-src -r -y
 
-      # ビルドとテストの実行
       - name: Build and test
         run: |
           source /opt/ros/humble/setup.bash
