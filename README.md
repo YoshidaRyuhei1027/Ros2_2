@@ -26,16 +26,17 @@ weather_data より、以下の解析を実行：
 
 - 1.各自のワーキングディレクトリに移動し、リポジトリをクローン```git clone https://github.com/YoshidaRyuhei1027/Ros2_2.git```
 - 2.パッケージをビルド```colcon build```
-- 3.ビルド後の環境を適用```source ~/.bashrc```
+- 3.ビルド後の環境を適用```source /opt/ros/foxy/setup.bash``` ```source ~/ros2_ws/install/setup.bash```
 
 
 ## 動作環境
 必要なソフトウェア
-- Python 3.7以上
-- ROS 2 Humble Hawksbill
-- テスト環境
-- OS: Ubuntu 22.04.2 LTS
-- コンテナ: 上田教授提供のROS 2 Humble対応コンテナ
+- Python 3.6以上
+- ROS 2 Foxy Fitzroy
+
+## テスト環境
+- OS: Ubuntu 20.04 LTS
+- コンテナ: OSRF提供のROS 2 Foxy対応コンテナ
 
 ## ライセンス
 - このソフトウェアパッケージは、3条項BSDライセンスの下、再頒布および使用が許可されます．
