@@ -24,9 +24,9 @@ weather_data より、以下の解析を実行：
 ## 使用準備
 以下の手順で環境をセットアップしてください。
 
-- 1.各自のワーキングディレクトリに移動し、リポジトリをクローン```git clone https://github.com/YoshidaRyuhei1027/Ros2_2.git```
-- 2.パッケージをビルド```colcon build```
-- 3.ビルド後の環境を適用```source /opt/ros/foxy/setup.bash``` ```source ~/ros2_ws/install/setup.bash```
+1. 各自のワーキングディレクトリに移動し、リポジトリをクローン```git clone https://github.com/YoshidaRyuhei1027/Ros2_2.git```
+2. パッケージをビルド```colcon build```
+3. ビルド後の環境を適用```source /opt/ros/foxy/setup.bash``` ```source ~/ros2_ws/install/setup.bash```
 
 
 ## 動作環境
