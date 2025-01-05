@@ -1,46 +1,39 @@
-name: ROS 2 CI Test
-
-on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
-
+name: test
+on: push
 jobs:
   test:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     container: ryuichiueda/ubuntu22.04-ros2:latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      # リポジトリの内容をチェックアウト
+      - uses: actions/checkout@v2
 
-      - name: Setup workspace
-        run: |
-          mkdir -p /root/ros2_ws/src
-          rsync -av ./ /root/ros2_ws/src/
+      # 必要なパッケージのインストール
+      - name: Install required tools
+        run: sudo apt-get update && sudo apt-get install -y bsdmainutils rsync
 
-      - name: Install dependencies
+      # ビルドとテストの実行
+      - name: Build and Test
         run: |
-          sudo apt-get update
-          sudo apt-get install -y python3-colcon-common-extensions python3-rosdep
-          sudo rm -f /etc/ros/rosdep/sources.list.d/20-default.list || true
-          sudo rosdep init || true
-          rosdep update
-
-      - name: Resolve dependencies
-        shell: bash
-        run: |
-          source /opt/ros/humble/setup.bash
-          rosdep install --from-paths /root/ros2_ws/src --ignore-src -r -y
-
-      - name: Build and test
-        shell: bash
-        run: |
-          source /opt/ros/humble/setup.bash
+          # リポジトリ内容をワークスペースにコピー
+          rsync -av ./ /root/ros2_ws/src/mypkg
+          
+          # ROS 2 ワークスペースに移動
           cd /root/ros2_ws
+          
+          # 依存関係の解決
+          rosdep update
+          rosdep install -i --from-path src --rosdistro humble -y
+          
+          # ワークスペースのビルド
           colcon build
+          
+          # ビルド結果を確認
           colcon test
-          colcon test-result --all
+          
+          # テストの詳細レポートを出力
+          colcon test-result --verbose
+          
+          # カスタムテストスクリプトの実行
+          bash -xv ./src/mypkg/test/test.bash /root
 
