@@ -34,11 +34,11 @@ weather_data より、以下の解析を実行：
 
 ## 動作環境
 必要なソフトウェア
-Python 3.7以上
-ROS 2 Humble Hawksbill
-テスト環境
-OS: Ubuntu 22.04.2 LTS
-コンテナ: 上田教授提供のROS 2 Humble対応コンテナ
+- Python 3.7以上
+- ROS 2 Humble Hawksbill
+- テスト環境
+- OS: Ubuntu 22.04.2 LTS
+- コンテナ: 上田教授提供のROS 2 Humble対応コンテナ
 
 ## ライセンス
 - このソフトウェアパッケージは、3条項BSDライセンスの下、再頒布および使用が許可されます．
