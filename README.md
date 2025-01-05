@@ -24,48 +24,14 @@ Matplotlibを使用したグラフの生成（例：気温推移の可視化）�
 ## 使用準備
 以下の手順で環境をセットアップしてください。
 
-必要なソフトウェアのインストール
-ターミナルで以下を実行：
-
-bash
-コードをコピーする
-sudo apt install python3-pip
-pip install matplotlib
-sudo apt-get install git  # Git未インストールの場合のみ
-リポジトリのクローン
-ワーキングディレクトリに移動し、以下を実行：
-
-bash
-コードをコピーする
-git clone https://github.com/ユーザー名/リポジトリ名.git
-cd リポジトリ名
-パッケージのビルド
-以下を実行：
-
-bash
-コードをコピーする
+各自のワーキングディレクトリに移動し、リポジトリをクローン
+git clone https://github.com/mooto2525/ROS2_2.git
+パッケージをビルド
 colcon build
-環境設定の反映
-ビルド後に以下を実行：
+ビルド後の環境を適用
+source ~/.bashrc
 
-bash
-コードをコピーする
-source install/setup.bash
-使用方法
-以下のコマンドでノードを起動します。
 
-Publisherノードの起動
-気象データを配信する weather_publisher を起動：
-
-bash
-コードをコピーする
-ros2 run mypkg weather_publisher
-Subscriberノードの起動
-データを解析・表示する weather_analyzer を起動：
-
-bash
-コードをコピーする
-ros2 run mypkg weather_analyzer
 動作環境
 必要なソフトウェア
 Python 3.7以上
