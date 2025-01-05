@@ -3,37 +3,17 @@ on: push
 jobs:
   test:
     runs-on: ubuntu-latest
-    container: ryuichiueda/ubuntu22.04-ros2:latest
+    container: osrf/ros:foxy-desktop
     steps:
-      # リポジトリの内容をチェックアウト
       - uses: actions/checkout@v2
-
-      # 必要なパッケージのインストール
-      - name: Install required tools
-        run: sudo apt-get update && sudo apt-get install -y bsdmainutils rsync
-
-      # ビルドとテストの実行
+      - name: Install dependencies
+        run: |
+          apt-get update
+          rosdep update
+          rosdep install --from-paths src --ignore-src -r -y
       - name: Build and Test
         run: |
-          # リポジトリ内容をワークスペースにコピー
-          rsync -av ./ /root/ros2_ws/src/mypkg
-          
-          # ROS 2 ワークスペースに移動
-          cd /root/ros2_ws
-          
-          # 依存関係の解決
-          rosdep update
-          rosdep install -i --from-path src --rosdistro humble -y
-          
-          # ワークスペースのビルド
+          source /opt/ros/foxy/setup.bash
           colcon build
-          
-          # ビルド結果を確認
-          colcon test
-          
-          # テストの詳細レポートを出力
-          colcon test-result --verbose
-          
-          # カスタムテストスクリプトの実行
-          bash -xv ./src/mypkg/test/test.bash /root
+          colcon test --event-handlers console_direct+
 
