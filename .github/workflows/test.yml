@@ -5,15 +5,25 @@ jobs:
     runs-on: ubuntu-latest
     container: osrf/ros:foxy-desktop
     steps:
-      - uses: actions/checkout@v2
-      - name: Install dependencies
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup ROS environment
         run: |
           apt-get update
+          apt-get install -y python3-colcon-common-extensions
           rosdep update
+
+      - name: Prepare workspace
+        run: |
+          mkdir -p /root/ros2_ws/src
+          rsync -a $GITHUB_WORKSPACE/ /root/ros2_ws/src/
+          cd /root/ros2_ws
           rosdep install --from-paths src --ignore-src -r -y
-      - name: Build and Test
+
+      - name: Build and test
         run: |
           source /opt/ros/foxy/setup.bash
+          cd /root/ros2_ws
           colcon build
           colcon test --event-handlers console_direct+
-
