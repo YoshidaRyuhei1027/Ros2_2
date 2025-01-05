@@ -43,3 +43,5 @@ weather_data より、以下の解析を実行：
 - このパッケージのコードの一部は、下記のスライド(CC-BY-SA 4.0 by Ryuichi Ueda)のものを、本人の許可を得て自身の著作としたものです。
    ryuichiueda/slides_marp/robosys2024
 - © 2024 Ryuhei Yoshida
+
+※mypkg内のtalker.pyとlistener.pyは学習用に作成しました。作成者が、振り返りように残しています。
