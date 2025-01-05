@@ -8,10 +8,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Setup ROS environment
+      - name: Install dependencies
         run: |
           apt-get update
-          apt-get install -y python3-colcon-common-extensions
+          apt-get install -y python3-colcon-common-extensions rsync
+
+      - name: Setup ROS environment
+        run: |
           rosdep update
 
       - name: Prepare workspace
@@ -27,3 +30,4 @@ jobs:
           cd /root/ros2_ws
           colcon build
           colcon test --event-handlers console_direct+
+
