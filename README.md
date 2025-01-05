@@ -25,11 +25,11 @@ weather_data より、以下の解析を実行：
 以下の手順で環境をセットアップしてください。
 
 各自のワーキングディレクトリに移動し、リポジトリをクローン
-git clone https://github.com/YoshidaRyuhei1027/Ros2_2.git
+```git clone https://github.com/YoshidaRyuhei1027/Ros2_2.git```
 パッケージをビルド
-colcon build
+```colcon build```
 ビルド後の環境を適用
-source ~/.bashrc
+```source ~/.bashrc```
 
 
 ## 動作環境
