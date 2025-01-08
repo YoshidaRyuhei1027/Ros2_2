@@ -43,10 +43,9 @@
 - 必要なソフトウェア:
   -Python 3.6以上
   -ROS 2 Foxy Fitzroy
-
-### テスト環境 ###
-- OS: Ubuntu 20.04 LTS
-- コンテナ: OSRF 提供の ROS 2 Foxy 対応コンテナ
+- テスト環境
+  - OS: Ubuntu 20.04 LTS
+  - コンテナ: OSRF 提供の ROS 2 Foxy 対応コンテナ
 
 ---
 
