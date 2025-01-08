@@ -13,11 +13,6 @@ jobs:
           apt-get update
           apt-get install -y python3-colcon-common-extensions rsync
 
-      - name: Setup ROS environment
-        run: |
-          echo "source /opt/ros/foxy/setup.bash" >> ~/.bashrc
-          source ~/.bashrc
-
       - name: Prepare workspace
         run: |
           mkdir -p /root/ros2_ws/src
@@ -27,28 +22,28 @@ jobs:
 
       - name: Build and test
         run: |
-          source /opt/ros/foxy/setup.bash
+          . /opt/ros/foxy/setup.bash
           cd /root/ros2_ws
           colcon build
-          source install/setup.bash
+          . install/setup.bash
 
       - name: Run Weather Publisher
         run: |
-          source /opt/ros/foxy/setup.bash
-          source /root/ros2_ws/install/setup.bash
+          . /opt/ros/foxy/setup.bash
+          . /root/ros2_ws/install/setup.bash
           ros2 run mypkg weather_publisher &
           sleep 5
 
       - name: Run Weather Analyzer
         run: |
-          source /opt/ros/foxy/setup.bash
-          source /root/ros2_ws/install/setup.bash
+          . /opt/ros/foxy/setup.bash
+          . /root/ros2_ws/install/setup.bash
           ros2 run mypkg weather_analyzer &
           sleep 5
 
       - name: Echo Weather Data Topic
         run: |
-          source /opt/ros/foxy/setup.bash
-          source /root/ros2_ws/install/setup.bash
+          . /opt/ros/foxy/setup.bash
+          . /root/ros2_ws/install/setup.bash
           ros2 topic echo /weather_data
 
