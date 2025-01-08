@@ -13,6 +13,11 @@ jobs:
           apt-get update
           apt-get install -y python3-colcon-common-extensions rsync
 
+      - name: Initialize rosdep
+        run: |
+          rosdep init || true  # 初期化が必要ない場合でもエラーにしない
+          rosdep update
+
       - name: Prepare workspace
         run: |
           mkdir -p /root/ros2_ws/src
