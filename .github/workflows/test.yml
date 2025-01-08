@@ -9,67 +9,58 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Install dependencies
-        shell: bash
         run: |
           apt-get update
           apt-get install -y python3-colcon-common-extensions rsync
 
-      - name: Initialize rosdep
-        shell: bash
+      - name: Setup ROS environment
         run: |
-          rosdep init || true
           rosdep update
 
       - name: Prepare workspace
-        shell: bash
         run: |
           mkdir -p /root/ros2_ws/src
           rsync -a $GITHUB_WORKSPACE/ /root/ros2_ws/src/
           cd /root/ros2_ws
           rosdep install --from-paths src --ignore-src -r -y
 
-      - name: Build and source
+      - name: Build and Test Packages
         shell: bash
         run: |
           source /opt/ros/foxy/setup.bash
           cd /root/ros2_ws
           colcon build
-          source install/setup.bash
+          colcon test --event-handlers console_direct+
 
-      - name: Run Weather Publisher
+      - name: Launch Weather Publisher
         shell: bash
         run: |
           source /opt/ros/foxy/setup.bash
           source /root/ros2_ws/install/setup.bash
           ros2 run mypkg weather_publisher &
-          sleep 5
-
-      - name: Run Weather Analyzer
-        shell: bash
-        run: |
-          source /opt/ros/foxy/setup.bash
-          source /root/ros2_ws/install/setup.bash
-          ros2 run mypkg weather_analyzer &
-          sleep 5
-
-      - name: Wait for weather_data topic
-        shell: bash
-        run: |
-          source /opt/ros/foxy/setup.bash
-          source /root/ros2_ws/install/setup.bash
-          for i in {1..10}; do
-            if ros2 topic list | grep -q "/weather_data"; then
-              echo "Topic /weather_data is now available."
-              break
-            fi
-            echo "Waiting for /weather_data topic..."
-            sleep 2
-          done
+          PUBLISHER_PID=$!
+          sleep 5  # パブリッシャが安定してトピックを発行する時間を確保
+          kill $PUBLISHER_PID
 
       - name: Echo Weather Data Topic
         shell: bash
         run: |
           source /opt/ros/foxy/setup.bash
           source /root/ros2_ws/install/setup.bash
-          ros2 topic echo /weather_data --once
+          ros2 topic echo /weather_data > /root/weather_data.log &
+          ECHO_PID=$!
+          sleep 10  # 10秒間だけトピックデータをエコー
+          kill $ECHO_PID
+          echo "Weather data log contents:"
+          cat /root/weather_data.log  # ログ内容を表示
+
+      - name: Verify Weather Data Topic Output
+        shell: bash
+        run: |
+          if grep -q "Station=" /root/weather_data.log; then
+            echo "Weather data topic contains valid output."
+          else
+            echo "Weather data topic output is invalid."
+            exit 1
+          fi
 
