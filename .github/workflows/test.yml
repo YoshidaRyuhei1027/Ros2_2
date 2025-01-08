@@ -24,7 +24,15 @@ jobs:
           cd /root/ros2_ws
           rosdep install --from-paths src --ignore-src -r -y
 
-      - name: Build and test
+      - name: Build the package
         run: |
-          bash -c "source /opt/ros/foxy/setup.bash && cd /root/ros2_ws && colcon build && colcon test --event-handlers console_direct+"
+          bash -c "source /opt/ros/foxy/setup.bash && cd /root/ros2_ws && colcon build"
+
+      - name: Run tests
+        run: |
+          bash -c "source /opt/ros/foxy/setup.bash && cd /root/ros2_ws && colcon test --event-handlers console_direct+"
+
+      - name: Test the topic publish/subscribe functionality
+        run: |
+          bash -c "source /opt/ros/foxy/setup.bash && ros2 run mypkg weather_publisher & ros2 run mypkg weather_analyzer & ros2 topic echo /weather_data"
 
