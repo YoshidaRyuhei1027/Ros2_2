@@ -30,6 +30,7 @@ jobs:
           source /opt/ros/foxy/setup.bash
           cd /root/ros2_ws
           colcon build
+          source install/setup.bash
           colcon test --event-handlers console_direct+
 
       - name: Launch Weather Publisher
