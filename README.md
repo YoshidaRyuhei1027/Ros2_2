@@ -32,8 +32,7 @@
 ## 使用準備
 
 ### 環境セットアップ手順
-1. **リポジトリのクローン**  
-   ```git clone https://github.com/YoshidaRyuhei1027/Ros2_2.git```
+1. **リポジトリのクローン**  ```git clone https://github.com/YoshidaRyuhei1027/Ros2_2.git```
 2. **パッケージのビルド**
    ```colcon build```
 3. **ビルド後の環境を適用**
