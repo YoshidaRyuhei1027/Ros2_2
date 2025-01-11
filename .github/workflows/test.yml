@@ -20,7 +20,7 @@ jobs:
           mkdir -p /root/ros2_ws/src
           rsync -a $GITHUB_WORKSPACE/ /root/ros2_ws/src/
           cd /root/ros2_ws
-          rosdep install --from-paths src --ignore-src -r -y || exit 1
+          rosdep install --from-paths src --ignore-src -r -y || exit 1     
 
       - name: Build and Test Packages
         shell: bash
@@ -36,7 +36,7 @@ jobs:
         run: |
           source /opt/ros/foxy/setup.bash
           source /root/ros2_ws/install/setup.bash
-          ros2 run mypkg weather_publisher &  # 実行
+          ros2 run mypkg weather_publisher &
           PUBLISHER_PID=$!
           sleep 5  # 実行時間
           kill $PUBLISHER_PID || echo "Process already exited."
@@ -51,6 +51,16 @@ jobs:
           sleep 20  # ログ収集の時間を延長
           kill $ECHO_PID || echo "Echo process already exited."
           echo "Weather data log contents:"
+          cat /root/weather_data.log
+
+      - name: Debug Topic Echo
+        shell: bash
+        run: |
+          source /opt/ros/foxy/setup.bash
+          source /root/ros2_ws/install/setup.bash
+          ros2 topic echo /weather_data > /root/weather_data.log &
+          sleep 10
+          echo "Captured data:"
           cat /root/weather_data.log
 
       - name: Verify Weather Data Topic Output
