@@ -11,10 +11,8 @@ jobs:
       - name: Install dependencies
         run: |
           apt-get update
-          apt-get install -y python3-colcon-common-extensions rsync
-
-      - name: Setup ROS environment
-        run: |
+          apt-get install -y python3-colcon-common-extensions rsync python3-rosdep
+          rosdep init || true
           rosdep update
 
       - name: Prepare workspace
@@ -22,14 +20,14 @@ jobs:
           mkdir -p /root/ros2_ws/src
           rsync -a $GITHUB_WORKSPACE/ /root/ros2_ws/src/
           cd /root/ros2_ws
-          rosdep install --from-paths src --ignore-src -r -y
+          rosdep install --from-paths src --ignore-src -r -y || exit 1
 
       - name: Build and Test Packages
         shell: bash
         run: |
           source /opt/ros/foxy/setup.bash
           cd /root/ros2_ws
-          colcon build
+          colcon build || exit 1
           source install/setup.bash
           colcon test --event-handlers console_direct+
 
@@ -38,10 +36,10 @@ jobs:
         run: |
           source /opt/ros/foxy/setup.bash
           source /root/ros2_ws/install/setup.bash
-          ros2 run mypkg weather_publisher &
+          ros2 run mypkg weather_publisher &  # 実行
           PUBLISHER_PID=$!
-          sleep 5
-          kill $PUBLISHER_PID
+          sleep 5  # 実行時間
+          kill $PUBLISHER_PID || echo "Process already exited."
 
       - name: Echo Weather Data Topic
         shell: bash
@@ -50,8 +48,8 @@ jobs:
           source /root/ros2_ws/install/setup.bash
           ros2 topic echo /weather_data > /root/weather_data.log &
           ECHO_PID=$!
-          sleep 10
-          kill $ECHO_PID
+          sleep 10  # ログ収集の時間を延長
+          kill $ECHO_PID || echo "Echo process already exited."
           echo "Weather data log contents:"
           cat /root/weather_data.log
 
