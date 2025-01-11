@@ -40,7 +40,7 @@ jobs:
           source /root/ros2_ws/install/setup.bash
           ros2 run mypkg weather_publisher &
           PUBLISHER_PID=$!
-          sleep 5  # パブリッシャが安定してトピックを発行する時間を確保
+          sleep 5
           kill $PUBLISHER_PID
 
       - name: Echo Weather Data Topic
@@ -50,10 +50,10 @@ jobs:
           source /root/ros2_ws/install/setup.bash
           ros2 topic echo /weather_data > /root/weather_data.log &
           ECHO_PID=$!
-          sleep 10  # 10秒間だけトピックデータをエコー
+          sleep 10
           kill $ECHO_PID
           echo "Weather data log contents:"
-          cat /root/weather_data.log  # ログ内容を表示
+          cat /root/weather_data.log
 
       - name: Verify Weather Data Topic Output
         shell: bash
