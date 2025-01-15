@@ -1,31 +1,55 @@
 #!/bin/bash
-# SPDX-FileCopyrightText: 2024 Ryusei Fujimura
+# SPDX-FileCopyrightText: 2025 Your Name
 # SPDX-License-Identifier: BSD-3-Clause
 
-ng () {
-	echo ${1}行目が違うよ
-	res=1
+# テスト結果を保持する変数
+result=0
+
+# テスト失敗時の出力関数
+fail_test() {
+    echo "Test failed at line $1"
+    result=1
 }
 
-res=0
+# ROS 2 環境のセットアップ
+source /opt/ros/foxy/setup.bash
+source ~/ros2_ws/install/setup.bash
 
-dir=~  # デフォルトの作業ディレクトリ
-[ "$1" != "" ] && dir="$1"
+# 作業ディレクトリを設定
+cd ~/ros2_ws
 
-cd $dir/ros2_ws
-colcon build || exit 1  # ビルドエラーで終了
-source $dir/.bashrc
+# ビルドの実行
+colcon build || { echo "Build failed"; exit 1; }
 
-# ノードの起動とログ取得
-timeout 20 ros2 launch mypkg weather_publisher_and_analyzer.launch.py > /tmp/mypkg.log
+# ログファイルのパス
+LOG_FILE="/tmp/mypkg_test.log"
 
-# ログ確認
-grep "Publishing: Name=" /tmp/mypkg.log || ng ${LINENO}
-grep "Received: Station=" /tmp/mypkg.log || ng ${LINENO}
+# ログファイルをクリア
+> "$LOG_FILE"
 
-# デバッグ用
-cat /tmp/mypkg.log
+# Launch ファイルを実行（タイムアウト付きで30秒間）
+timeout 30s ros2 launch mypkg weather_publisher_and_analyzer.launch.py > "$LOG_FILE" 2>&1
+if [ $? -ne 0 ]; then
+    echo "Launch failed"
+    fail_test $LINENO
+fi
 
-[ "$res" = 0 ] && echo OK || echo テスト失敗
-exit "$res"
+# ログファイルの確認
+grep -q "Publishing: Name=" "$LOG_FILE" || fail_test $LINENO
+grep -q "Received: Station=" "$LOG_FILE" || fail_test $LINENO
+grep -q "Published analysis for station" "$LOG_FILE" || fail_test $LINENO
+
+# ログを表示（デバッグ用）
+echo "===== Test Log ====="
+cat "$LOG_FILE"
+echo "===================="
+
+# テスト結果の出力
+if [ $result -eq 0 ]; then
+    echo "All tests passed."
+else
+    echo "One or more tests failed."
+fi
+
+exit $result
 
