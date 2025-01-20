@@ -1,60 +1,44 @@
-name: ROS 2 CI
+name: ROS 2 Test
 
 on:
   push:
     branches:
-      - main  # 'main'ブランチへのプッシュ時に実行される
+      - main  # mainブランチへのpushで実行
   pull_request:
     branches:
-      - main  # 'main'ブランチへのPR作成時に実行される
+      - main  # mainブランチへのPRで実行
 
 jobs:
-  build:
-    runs-on: ubuntu-latest  # 最新のUbuntu環境で実行
+  test:
+    runs-on: ubuntu-latest
+    container: osrf/ros:foxy-desktop
 
     steps:
-    - name: Check out repository
-      uses: actions/checkout@v2
+      # リポジトリのコードを取得
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    - name: Set up Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: '3.8'
+      # 必要な依存関係をインストール
+      - name: Install dependencies
+        run: |
+          apt-get update
+          apt-get install -y python3-colcon-common-extensions rsync
 
-    - name: Install dependencies
-      run: |
-        sudo apt update
-        sudo apt install -y \
-          curl \
-          gnupg2 \
-          lsb-release \
-          build-essential \
-          cmake \
-          python3-colcon-common-extensions \
-          python3-pip
+      # ROS 2 環境をセットアップ
+      - name: Setup ROS environment
+        run: |
+          rosdep update
 
-    - name: Install ROS 2 dependencies
-      run: |
-        sudo curl -sSL https://get.ros.org/ros2/foxy/setup.bash | sudo bash
-        sudo apt install -y \
-          ros-foxy-ros-base \
-          python3-rosdep
+      # ワークスペースの準備
+      - name: Prepare workspace
+        run: |
+          mkdir -p /root/ros2_ws/src
+          rsync -a $GITHUB_WORKSPACE/ /root/ros2_ws/src/
+          cd /root/ros2_ws
+          rosdep install --from-paths src --ignore-src -r -y
 
-    - name: Install dependencies using rosdep
-      run: |
-        sudo rosdep init
-        rosdep update
-        rosdep install --from-paths src --ignore-src --rosdistro foxy -y
-
-    - name: Build the workspace
-      run: |
-        source /opt/ros/foxy/setup.bash
-        cd ~/ros2_ws
-        colcon build --symlink-install
-
-    - name: Run tests
-      run: |
-        source ~/ros2_ws/install/setup.bash
-        colcon test
-        colcon test-result --verbose
+      # ワークスペースのビルドとテスト
+      - name: Build and test
+        run: |
+          bash -c "source /opt/ros/foxy/setup.bash && cd /root/ros2_ws && colcon build && colcon test --event-handlers console_direct+"
 
