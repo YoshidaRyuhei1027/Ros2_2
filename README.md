@@ -102,8 +102,6 @@ is_low_humidity: false
 
 ---
 
-## 備考 ##
-mypkg 内の talker.py と listener.py は学習用に作成されたもので、作成者が振り返りのために残しています。
 
 
 
