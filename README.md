@@ -4,6 +4,7 @@
 
 ## 概要
 **Weather Analyzer** は、ROS 2 を利用して気象データを配信・解析するためのパッケージです。
+weather_analyzer.py の中で、self.pub.publish(analysis) を通じて解析結果を weather_analysis トピックにパブリッシュしています。この処理により、解析結果が他のノードでも利用可能になっています。
 
 ### 機能
 - **Publisherノード**: 天気情報（例：気温、湿度、気圧など）をトピックに配信
@@ -48,6 +49,48 @@
 - テスト環境
   - OS: Ubuntu 20.04 LTS
   - コンテナ: OSRF 提供の ROS 2 Foxy 対応コンテナ
+ 
+### 使用例 ###
+ステップ1:Weather Publisher ノードを起動
+1つ目のターミナルで、天気データをパブリッシュする weather_publisher.py を起動します。
+``` ros2 run mypkg weather_publisher ```
+以下のようなログが表示されます:
+```
+[INFO] [1234567890.123456]: Publishing: Name=Weather Station A, Temp=25.5°C, Humidity=60.0%
+[INFO] [1234567892.123456]: Publishing: Name=Weather Station A, Temp=25.5°C, Humidity=60.0%
+```
+ステップ2: Weather Analyzer ノードを起動
+2つ目のターミナルで、受信した天気データを解析し、解析結果をパブリッシュする weather_analyzer.py を起動します。
+``` ros2 run mypkg weather_analyzer ```
+以下のようなログが表示されます:
+```
+[INFO] [1234567890.456789]: Received: Station=Weather Station A, Temperature=25.5°C, Humidity=60.0%
+[INFO] [1234567890.456890]: Published analysis for station Weather Station A.
+```
+高温や低湿度の警報が発生した場合は、以下のような警告も表示されます:
+```
+[WARN] [1234567890.789123]: High Temperature Alert at Weather Station A! Temp=35.0°C
+[WARN] [1234567890.789456]: Low Humidity Alert at Weather Station A! Humidity=15.0%
+```
+ステップ 3: 解析結果を確認
+3つ目のターミナルで、解析結果を確認します。以下のコマンドを実行してください:
+```
+ros2 topic echo /weather_analysis
+```
+出力例:
+```
+station: Weather Station A
+average_temperature: 25.5
+is_high_temperature: false
+is_low_humidity: false
+```
+警報がある場合:
+```
+station: Weather Station A
+average_temperature: 35.0
+is_high_temperature: true
+is_low_humidity: false
+```
 
 ---
 
