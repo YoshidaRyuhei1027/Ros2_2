@@ -1,5 +1,7 @@
 # Weather-Analyzer
 
+[![ROS 2 Test](https://github.com/YoshidaRyuhei1027/Weather-Analyzer/actions/workflows/test.yml/badge.svg)](https://github.com/YoshidaRyuhei1027/Weather-Analyzer/actions/workflows/test.yml)
+
 ## 概要
 **Weather Analyzer** は、ROS 2 を利用して気象データを配信・解析するためのパッケージです。
 
