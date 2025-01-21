@@ -3,10 +3,10 @@ name: ROS 2 Test
 on:
   push:
     branches:
-      - main  # mainブランチへのpushで実行
+      - main  
   pull_request:
     branches:
-      - main  # mainブランチへのPRで実行
+      - main  
 
 jobs:
   test:
@@ -14,22 +14,22 @@ jobs:
     container: osrf/ros:foxy-desktop
 
     steps:
-      # リポジトリのコードを取得
+      
       - name: Checkout code
         uses: actions/checkout@v2
 
-      # 必要な依存関係をインストール
+      
       - name: Install dependencies
         run: |
           apt-get update
           apt-get install -y python3-colcon-common-extensions rsync
 
-      # ROS 2 環境をセットアップ
+      
       - name: Setup ROS environment
         run: |
           rosdep update
 
-      # ワークスペースの準備
+      
       - name: Prepare workspace
         run: |
           mkdir -p /root/ros2_ws/src
@@ -37,7 +37,7 @@ jobs:
           cd /root/ros2_ws
           rosdep install --from-paths src --ignore-src -r -y
 
-      # ワークスペースのビルドとテスト
+      
       - name: Build and test
         run: |
           bash -c "source /opt/ros/foxy/setup.bash && cd /root/ros2_ws && colcon build && colcon test --event-handlers console_direct+"
