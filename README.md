@@ -55,7 +55,6 @@
 - 本ソフトウェアパッケージは、3条項BSDライセンスの下で再頒布および使用が許可されています。
 - 一部のコードは、以下のスライドの内容を参考に作成されています（CC-BY-SA 4.0 by Ryuichi Ueda）:
   - [ryuichiueda/slides_marp/robosys2024](https://github.com/ryuichiueda/slides_marp/tree/master/robosys2024)
-)
 - © 2024 Ryuhei Yoshida
 
 ---
